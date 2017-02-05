@@ -1,0 +1,8 @@
+
+  - name: Delete cluster nodes
+    local_action:
+      module: cs_instance
+      name: "{{ cluster_prefix }}-{{ cluster_name }}-node-{{ item }}"
+      state: expunged
+    with_sequence: count={{ nb_nodes }}
+    tags: vm

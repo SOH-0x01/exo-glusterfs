@@ -1,0 +1,27 @@
+
+  - name: Start cluster nodes
+    local_action:
+      module: cs_instance
+      name: "{{ cluster_prefix }}-{{ cluster_name }}-node-{{ item }}"
+      zone: "{{ exo_zone }}"
+      template: "{{ exo_template }}"
+      service_offering: "{{ exo_instance_type }}"
+      ssh_key: "{{ cluster_ssh_key }}"
+      security_groups: [ '{{ cluster_security_group_name }}' ]
+      tags:
+        - { key: env, value: "{{ cluster_env }}" }
+        - { key: cluster_name, value: "{{ cluster_name }}" }
+        - { key: cluster_role, value: node }
+      user_data: "{{ lookup('template', '../templates/node-cloud-config.j2') }}"
+    with_sequence: count={{ nb_nodes }}
+    register: nodes
+    tags: vm
+
+  - add_host:
+      groups: nodes
+      hostname: "{{ item.display_name }}"
+      ansible_host: "{{ item.default_ip }}"
+      ansible_user: root
+      ansible_python_interpreter: /usr/bin/python
+    with_items: "{{ nodes.results }}"
+    tags: vm

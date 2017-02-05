@@ -1,0 +1,72 @@
+# Cluster Security Groups
+  - name: Delete cluster SSH for remote access
+    local_action:
+      module: cs_securitygroup_rule
+      security_group: "{{ cluster_security_group_name}}"
+      start_port: 22
+      end_port: 22
+      state: absent
+    tags: sgr
+
+# GlusterFs ports
+  - name: Delete rpcbind 111 TCP/UDP rule
+    local_action:
+      module: cs_securitygroup_rule
+      security_group: "{{ cluster_security_group_name}}"
+      start_port: 111
+      end_port: 111
+      protocol: tcp
+      user_security_group: "{{ cluster_security_group_name}}"
+      state: absent
+    tags: sgr
+
+  - name: Delete rpcbind 111 TCP/UDP rule
+    local_action:
+      module: cs_securitygroup_rule
+      security_group: "{{ cluster_security_group_name}}"
+      start_port: 111
+      end_port: 111
+      protocol: udp
+      user_security_group: "{{ cluster_security_group_name}}"
+      state: absent
+    tags: sgr
+
+  - name: Delete NFS 2049 TCP rule
+    local_action:
+      module: cs_securitygroup_rule
+      security_group: "{{ cluster_security_group_name}}"
+      start_port: 2049
+      end_port: 2049
+      user_security_group: "{{ cluster_security_group_name}}"
+      state: absent
+    tags: sgr
+
+  - name: Delete NFS Services 38465:38469 TCP rule
+    local_action:
+      module: cs_securitygroup_rule
+      security_group: "{{ cluster_security_group_name}}"
+      start_port: 38465
+      end_port: 38469
+      user_security_group: "{{ cluster_security_group_name}}"
+      state: absent
+    tags: sgr
+
+  - name: Delete Gluster Server 24007 TCP rule
+    local_action:
+      module: cs_securitygroup_rule
+      security_group: "{{ cluster_security_group_name}}"
+      start_port: 24007
+      end_port: 24007
+      user_security_group: "{{ cluster_security_group_name}}"
+      state: absent
+    tags: sgr
+
+  - name: Delete Brick Protocal 49152 TCP rule
+    local_action:
+      module: cs_securitygroup_rule
+      security_group: "{{ cluster_security_group_name}}"
+      start_port: 49152
+      end_port: 49152
+      user_security_group: "{{ cluster_security_group_name}}"
+      state: absent
+    tags: sgr

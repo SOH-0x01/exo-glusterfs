@@ -1,0 +1,30 @@
+---
+- hosts: localhost
+  connection: local
+  vars:
+    # Constants
+    exo_zone: CH-GVA-2
+    exo_template: Linux Ubuntu 16.04 LTS 64-bit 10G Disk (2016-10-20-85bb6c)
+    exo_instance_type: Micro
+    # Parameters
+    nb_nodes: "{{ cluster_init_nb_nodes }}"
+  post_tasks:
+    - name: Wait for the ssh to be up
+      become: false
+      local_action: wait_for host="{{ hostvars[item].ansible_host }}" port=22 timeout=90 delay=30
+      with_items: "{{ groups['nodes'] }}"
+  roles:
+    - create-cluster
+
+- hosts: nodes
+  vars:
+    gfs_brick_root_dir: /gfs
+    gfs_mount_root_dir: /mnt/gfs
+    gfs_additional_volumes: []
+  roles:
+    - setup-nodes
+
+- hosts: localhost
+  connection: local
+  roles:
+    - create-context

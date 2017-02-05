@@ -1,0 +1,11 @@
+[nodes]
+{% for name in groups['nodes'] %}
+{{ name }} ansible_host={{ hostvars[name]['ansible_host'] }}
+{% endfor %}
+
+[{{ cluster_name }}:children]
+nodes
+
+[{{ cluster_name }}:vars]
+ansible_ssh_user=root
+ansible_python_interpreter=/usr/bin/python
