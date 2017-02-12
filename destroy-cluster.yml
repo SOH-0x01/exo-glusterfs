@@ -9,4 +9,5 @@
     nb_nodes: "{{ cluster_init_nb_nodes }}"
   roles:
     - destroy-cluster
+    - destroy-keypair
     - destroy-context

@@ -1,0 +1,21 @@
+---
+# Generate ssh key pair for the heketi user
+- hosts: localhost
+  connection: local
+  vars:
+    keypair_name: heketi
+  roles:
+    - generate-keypair
+
+# Setup heketi on the nodes
+- hosts: all
+  become: True
+  vars:
+    # Heketi REST for glusterfs
+    heketi_version: 1.0.1
+    heketi_distribution: "heketi-{{ heketi_version }}.linux.amd64"
+    heketi_mirror_url: "https://github.com/heketi/heketi/releases/download/"
+    heketi_install_dir: "/usr/local"
+    heketi_port: 8080
+  roles:
+    - deploy-addons

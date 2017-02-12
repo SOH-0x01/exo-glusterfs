@@ -8,6 +8,16 @@
       state: absent
     tags: sgr
 
+# Heketi API
+  - name: Create heketi API 8080 TCP
+    local_action:
+      module: cs_securitygroup_rule
+      security_group: "{{ cluster_security_group_name}}"
+      start_port: 8080
+      end_port: 8080
+      state: absent
+    tags: sgr
+
 # GlusterFs ports
   - name: Delete rpcbind 111 TCP/UDP rule
     local_action:

@@ -1,0 +1,28 @@
+{
+  "port": "{{ heketi_port }}",
+
+  "use_auth": false,
+  "jwt": {
+    "admin": {
+      "key": "NoKey"
+    },
+    "user": {
+      "key": "NoSecret"
+    }
+  },
+
+  "glusterfs": {
+
+    "executor": "ssh",
+
+    "sshexec": {
+      "keyfile": "/etc/heketi/heketi.pem",
+      "user": "heketi",
+      "port": "22",
+      "fstab": "/etc/fstab"
+    },
+
+    "db": "/var/lib/heketi/heketi.db",
+    "loglevel" : "info"
+  }
+}

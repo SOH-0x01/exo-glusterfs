@@ -1,0 +1,98 @@
+---
+
+# Create heketi user and group
+- name: Create heketi group
+  group:
+    name: heketi
+    state: present
+  tags: addon-heketi
+
+- name: Create heketi user
+  user:
+    name: heketi
+    group: heketi
+    groups: admin,ssh
+    shell: "/bin/bash"
+    state: present
+  tags: addon-heketi
+
+# Create heketi directories
+- name: Create heketi directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: heketi
+    group: heketi
+  with_items:
+    - "/etc/heketi"
+    - "/var/lib/heketi"
+  tags: addon-heketi
+
+# Copy private/public keys
+- copy:
+    src: ./secret/heketi/heketi.pem
+    dest: /etc/heketi/heketi.pem
+    owner: heketi
+    group: heketi
+    mode: 0600
+
+- name: Set authorized public key for heketi
+  authorized_key:
+    user: heketi
+    state: present
+    key: "{{ lookup('file', './secret/heketi/heketi.pem.pub') }}"
+
+# Download heketi
+- name: Download heketi binaries
+  get_url:
+    url: "{{ heketi_mirror_url }}/{{ heketi_version }}/{{ heketi_distribution }}.tar.gz"
+    dest: "/tmp/"
+  tags: addon-heketi
+
+- name: Unarchive heketi to the install directory
+  unarchive:
+    src: "/tmp/{{ heketi_distribution }}.tar.gz"
+    dest: "/tmp/"
+    remote_src: yes
+    owner: root
+    group: root
+  tags: addon-heketi
+
+- name: Install heketi
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    remote_src: yes
+    mode: 755
+    owner: heketi
+    group: heketi
+  with_items:
+    - { src: "/tmp/heketi/heketi", dest: "{{ heketi_install_dir }}/bin/heketi" }
+    - { src: "/tmp/heketi/heketi-cli", dest: "{{ heketi_install_dir }}/sbin/heketi-cli" }
+  tags: addon-heketi
+
+# Setup heketi configuration
+- name: Deploy heketi configuration
+  template:
+    src: "templates/heketi-conf.j2"
+    dest: "/etc/heketi/heketi.json"
+    owner: heketi
+    group: heketi
+  tags: addon-heketi
+
+# Register the heketi service
+- name: Deploy systemd service unit
+  template:
+    src: "templates/heketi-systemd.j2"
+    dest: "/etc/systemd/system/heketi.service"
+    owner: root
+    group: root
+    mode: 755
+  tags: addon-heketi
+
+- name: Start and enable the service
+  service:
+    name: heketi
+    state: started
+    enabled: yes
+  tags: addon-heketi
