@@ -1,6 +1,7 @@
 .DS_STORE
 ._*
 cluster-inventory
+cluster-topology.json
 secret/*
 ansible.log
 cloudstack.ini

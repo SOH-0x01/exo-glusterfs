@@ -1,0 +1,49 @@
+  # Install partition management tools
+  - name: Install partition management required packages
+    apt:
+      name: "{{ item }}"
+      update_cache: yes
+    tags: prt
+    with_items:
+      - lvm2
+      - parted
+
+  # Check that the partition does not exists
+  - name: Check for /dev/vda2
+    command: parted -s /dev/vda print 2
+    register: vda2
+    failed_when: vda2.rc is not defined
+    changed_when: >
+      vda2.stdout == "Error: Partition doesn't exist."
+    tags: prt
+
+  # Resize the root partiion and create a new one
+  - name: Resize /dev/vda1
+    shell: parted /dev/vda unit B resizepart 1 YES 10737401343B YES
+    failed_when: false
+    when: vda2.rc != 0
+    tags: prt
+
+  - name: Create /dev/vda2
+    shell: parted /dev/vda unit B mkpart primary 10737401344B 100% IGNORE
+    failed_when: false
+    when: vda2.rc != 0
+    tags: prt
+
+  - name: Add LVM flag to /dev/vda2
+    shell: parted -s /dev/vda set 2 lvm on
+    when: vda2.rc != 0
+    tags: prt
+
+  - name: Create a PV/VG on /dev/vda2
+    lvg:
+      vg: vg0
+      pvs: /dev/vda2
+    tags: prt
+
+  - name: Create data LV on vg0
+    lvol:
+      vg: vg0
+      lv: data
+      size: 100%FREE
+    tags: prt

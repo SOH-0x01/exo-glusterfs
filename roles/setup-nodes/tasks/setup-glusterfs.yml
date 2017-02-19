@@ -1,0 +1,27 @@
+  # Install the required packages
+  - name: Install glusterfs required packages
+    apt:
+      name: "{{ item }}"
+      update_cache: yes
+    tags: gfs
+    with_items:
+      - attr
+      - glusterfs-server
+      - glusterfs-client
+
+  # Setup service
+  - name: Ensure GlusterFS is started and enabled at boot
+    service:
+      name: glusterfs-server
+      state: started
+      enabled: yes
+    tags: gfs
+
+  # Peer the hosts of the cluster, with their ips, not the hostnames
+  - name: Peer hosts to their mates on the cluster
+    shell: "gluster peer probe {{ hostvars[item].ansible_host }}"
+    register: gfs_peer_probe
+    changed_when: "'already in peer list' not in gfs_peer_probe.stdout"
+    failed_when: false
+    with_items: "{{ groups['nodes'] }}"
+    tags: gfs

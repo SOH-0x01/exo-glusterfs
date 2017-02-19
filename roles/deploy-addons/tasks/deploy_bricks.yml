@@ -1,0 +1,18 @@
+  # create a filesystem on the virtual volume
+  - name: Create ext4 filesystem on data LV
+    filesystem:
+      dev=/dev/vg0/data
+      fstype=ext4
+    when: vda2.rc != 0
+    tags: std
+
+  # Create the brick directories
+  - name: Create the root brick directory
+    file:
+      path: "/dev/vg0/data/brick{{ item }}"
+      state: directory
+      mode: 0775
+      owner: root
+      group: root
+    with_sequence: count={{ std_birck_nb }}
+    tags: std

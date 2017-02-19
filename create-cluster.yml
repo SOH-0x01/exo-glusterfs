@@ -4,7 +4,7 @@
   vars:
     # Constants
     exo_zone: CH-GVA-2
-    exo_template: Linux Ubuntu 16.04 LTS 64-bit 10G Disk (2016-10-20-85bb6c)
+    exo_template: Linux Ubuntu 16.04 LTS 64-bit 50G Disk (2016-10-20-85bb6c)
     exo_instance_type: Micro
     # Parameters
     nb_nodes: "{{ cluster_init_nb_nodes }}"
@@ -15,16 +15,9 @@
       with_items: "{{ groups['nodes'] }}"
   roles:
     - create-cluster
+    - create-context
 
 - hosts: nodes
   vars:
-    gfs_brick_root_dir: /gfs
-    gfs_mount_root_dir: /mnt/gfs
-    gfs_additional_volumes: []
   roles:
     - setup-nodes
-
-- hosts: localhost
-  connection: local
-  roles:
-    - create-context
