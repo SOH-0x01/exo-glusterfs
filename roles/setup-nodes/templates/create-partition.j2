@@ -1,0 +1,5 @@
+#!/usr/bin/expect
+eval spawn parted /dev/vda unit s mkpart primary 20971487s 100%
+expect "Warning: The resulting partition is not properly aligned for best performance. Ignore/Cancel? "
+send "Ignore\r"
+expect eof

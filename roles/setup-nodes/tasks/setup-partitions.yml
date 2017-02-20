@@ -5,8 +5,22 @@
       update_cache: yes
     tags: prt
     with_items:
+      - expect
       - lvm2
       - parted
+
+  # Prepare the scripts
+  - name: Create the partitioning scripts
+    template:
+      src: "{{ item }}.j2"
+      dest: "/root/{{ item }}"
+      owner: root
+      group: root
+      mode: 750
+    with_items:
+      - resize-partition
+      - create-partition
+    tags: prt
 
   # Check that the partition does not exists
   - name: Check for /dev/vda2
@@ -17,17 +31,15 @@
       vda2.stdout == "Error: Partition doesn't exist."
     tags: prt
 
-  # Resize the root partiion and create a new one
-  - name: Resize /dev/vda1
-    shell: parted /dev/vda unit B resizepart 1 YES 10737401343B YES
-    failed_when: false
+  # Execute the partitioning script
+  - name: Execute the partitioning script
+    shell: "./{{ item }}"
+    args:
+      chdir: /root/
     when: vda2.rc != 0
-    tags: prt
-
-  - name: Create /dev/vda2
-    shell: parted /dev/vda unit B mkpart primary 10737401344B 100% IGNORE
-    failed_when: false
-    when: vda2.rc != 0
+    with_items:
+      - resize-partition
+      - create-partition
     tags: prt
 
   - name: Add LVM flag to /dev/vda2

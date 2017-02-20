@@ -1,0 +1,5 @@
+#!/usr/bin/expect
+eval spawn parted /dev/vda unit s resizepart 1 yes 20971486s
+expect "Warning: Shrinking a partition can cause data loss, are you sure you want to continue? Yes/No? "
+send "Yes\r"
+expect eof
