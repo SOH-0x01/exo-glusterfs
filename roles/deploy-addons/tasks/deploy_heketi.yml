@@ -11,9 +11,18 @@
   user:
     name: heketi
     group: heketi
-    groups: admin,ssh
+    groups: admin,ssh,sudo
     shell: "/bin/bash"
     state: present
+  tags: addon-heketi
+
+- name: Deploy heketi sudoers inlcude
+  template:
+    src: "templates/sudo-heketi-users.j2"
+    dest: "/etc/sudoers.d/XX-heketi-users"
+    owner: root
+    group: root
+    mode: 440
   tags: addon-heketi
 
 # Create heketi directories

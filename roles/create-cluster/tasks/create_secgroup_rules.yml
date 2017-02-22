@@ -1,5 +1,4 @@
 # Cluster Security Groups
-
   - name: Create cluster SSH for remote access (cidr)
     local_action:
       module: cs_securitygroup_rule
@@ -26,9 +25,8 @@
       security_group: "{{ cluster_security_group_name}}"
       start_port: 8080
       end_port: 8080
-      user_security_group: "{{ item }}"
-    with_items: "{{ cluster_service_group_names }}"
-    tags: sg
+      cidr: 0.0.0.0/0
+    tags: sgr
 
   - name: Create heketi API 8080 TCP
     local_action:
@@ -36,7 +34,8 @@
       security_group: "{{ cluster_security_group_name}}"
       start_port: 8080
       end_port: 8080
-      cidr: 0.0.0.0/0
+      user_security_group: "{{ item }}"
+    with_items: "{{ cluster_service_group_names }}"
     tags: sgr
 
 # GlusterFs ports

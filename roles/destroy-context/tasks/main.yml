@@ -1,2 +1,3 @@
 ---
+  - include: delete_topology.yml
   - include: delete_inventory.yml

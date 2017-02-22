@@ -1,0 +1,4 @@
+# Create a json topology file for use in heketi
+- name: create the heketi topology file
+  template: src="templates/cluster-topology.j2" dest="./cluster-topology.json"
+  tags: topo

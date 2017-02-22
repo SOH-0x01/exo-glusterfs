@@ -3,4 +3,10 @@ hostname: "{{ cluster_prefix }}-{{ cluster_name }}-node-{{ item }}"
 locale: "en_US.UTF-8"
 packages:
   - "python-minimal"
+write_files:
+    - path: /etc/growroot-disabled
+      permissions: '0644'
+      owner: root:root
+      content: |
+        # Disable automatic growroot
 final_message: "DONE"

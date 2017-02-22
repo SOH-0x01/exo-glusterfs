@@ -36,26 +36,9 @@
     shell: "./{{ item }}"
     args:
       chdir: /root/
+    failed_when: false
     when: vda2.rc != 0
     with_items:
       - resize-partition
       - create-partition
-    tags: prt
-
-  - name: Add LVM flag to /dev/vda2
-    shell: parted -s /dev/vda set 2 lvm on
-    when: vda2.rc != 0
-    tags: prt
-
-  - name: Create a PV/VG on /dev/vda2
-    lvg:
-      vg: vg0
-      pvs: /dev/vda2
-    tags: prt
-
-  - name: Create data LV on vg0
-    lvol:
-      vg: vg0
-      lv: data
-      size: 100%FREE
     tags: prt

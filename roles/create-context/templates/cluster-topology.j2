@@ -1,0 +1,26 @@
+{
+    "clusters": [
+        {
+            "nodes": [
+{% for name in groups['nodes'] %}
+                {
+                    "node": {
+                        "hostnames": {
+                            "manage": [
+                                "{{ hostvars[name]['ansible_host'] }}"
+                            ],
+                            "storage": [
+                                "{{ hostvars[name]['ansible_host'] }}"
+                            ]
+                        },
+                        "zone": 1
+                    },
+                    "devices": [
+                        "/dev/vda2"
+                    ]
+                }{% if not loop.last %}{{','}}{% endif %}
+{% endfor %}
+            ]
+        }
+    ]
+}
