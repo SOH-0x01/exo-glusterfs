@@ -1,3 +1,4 @@
 ---
+  - include: setup-node.yml
   - include: setup-partitions.yml
   - include: setup-glusterfs.yml

@@ -1,0 +1,16 @@
+
+  # Upgrade the system
+  - name: Update all packages to the latest version
+    apt:
+      update_cache: yes
+      upgrade: dist
+    tags: std
+
+  - name: Add reference in /etc/hosts
+    template:
+      src: "etc-hosts.j2"
+      dest: "/etc/hosts"
+      owner: root
+      group: root
+      mode: 644
+    tags: std
