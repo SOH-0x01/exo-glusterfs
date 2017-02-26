@@ -85,22 +85,24 @@
       state: absent
     tags: sgr
 
-  - name: Delete Gluster Server 24007 TCP rule
+  - name: Delete Gluster Server 24007-24008 TCP rule
     local_action:
       module: cs_securitygroup_rule
       security_group: "{{ cluster_security_group_name}}"
       start_port: 24007
-      end_port: 24007
-      user_security_group: "{{ cluster_security_group_name}}"
+      end_port: 24008
+      user_security_group: "{{ item }}"
       state: absent
+    with_items: "{{ cluster_service_group_names }}"
     tags: sgr
 
-  - name: Delete Brick Protocal 49152 TCP rule
+  - name: Delete Brick Protocal 49152-49352 TCP rule (200 bricks)
     local_action:
       module: cs_securitygroup_rule
       security_group: "{{ cluster_security_group_name}}"
       start_port: 49152
-      end_port: 49152
-      user_security_group: "{{ cluster_security_group_name}}"
+      end_port: 49352
+      user_security_group: "{{ item }}"
       state: absent
+    with_items: "{{ cluster_service_group_names }}"
     tags: sgr
