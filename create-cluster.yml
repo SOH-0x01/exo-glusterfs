@@ -17,7 +17,41 @@
     - create-cluster
     - create-context
 
+# Setup the nodes and install glusterfs
 - hosts: nodes
   vars:
   roles:
     - setup-nodes
+
+# Generate ssh key pair for the heketi user
+- hosts: localhost
+  connection: local
+  vars:
+    keypair_name: heketi
+  roles:
+    - generate-keypair
+
+# Deploy heketi API on the nodes
+- hosts: all
+  become: True
+  vars:
+    # Heketi REST for glusterfs
+    heketi_version: 1.0.1
+    heketi_distribution: "heketi-{{ heketi_version }}.linux.amd64"
+    heketi_mirror_url: "https://github.com/heketi/heketi/releases/download/"
+    heketi_install_dir: "/usr/local"
+    heketi_port: 8080
+    # Standard file system bricks (no heketi)
+    std_birck_nb: 1
+  roles:
+    - deploy-api
+
+  - hosts: localhost
+    connection: local
+    post_tasks:
+      - name: Export HEKETI_CLI_SERVER variable to use heketi-cli
+        debug:
+          msg: "export HEKETI_CLI_SERVER=http://{{ hostvars[groups['nodes'][0]]['ansible_host'] }}:8080"
+      - name: Next... Load the topology
+        debug:
+          msg: "heketi-cli topology load --json=cluster-topology.json"
