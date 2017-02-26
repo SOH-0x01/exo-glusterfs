@@ -46,12 +46,12 @@
   roles:
     - deploy-api
 
-  - hosts: localhost
-    connection: local
-    post_tasks:
-      - name: Export HEKETI_CLI_SERVER variable to use heketi-cli
-        debug:
-          msg: "export HEKETI_CLI_SERVER=http://{{ hostvars[groups['nodes'][0]]['ansible_host'] }}:8080"
-      - name: Next... Load the topology
-        debug:
-          msg: "heketi-cli topology load --json=cluster-topology.json"
+- hosts: localhost
+  connection: local
+  post_tasks:
+    - name: Export HEKETI_CLI_SERVER variable to use heketi-cli
+      debug:
+        msg: "export HEKETI_CLI_SERVER=http://{{ hostvars[groups['nodes'][0]]['ansible_host'] }}:8080"
+    - name: Next... Load the topology
+      debug:
+        msg: "heketi-cli topology load --json=cluster-topology.json"
