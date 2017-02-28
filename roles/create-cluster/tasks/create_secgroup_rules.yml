@@ -39,33 +39,26 @@
     tags: sgr
 
 # GlusterFs ports
-  - name: Create rpcbind 111 TCP/UDP rule
+  - name: Create rpcbind 111 TCP rule
     local_action:
       module: cs_securitygroup_rule
       security_group: "{{ cluster_security_group_name}}"
       start_port: 111
       end_port: 111
       protocol: tcp
-      user_security_group: "{{ cluster_security_group_name}}"
+      user_security_group: "{{ item }}"
+    with_items: "{{ cluster_service_group_names }}"
     tags: sgr
 
-  - name: Create rpcbind 111 TCP/UDP rule
+  - name: Create rpcbind 111 UDP rule
     local_action:
       module: cs_securitygroup_rule
       security_group: "{{ cluster_security_group_name}}"
       start_port: 111
       end_port: 111
       protocol: udp
-      user_security_group: "{{ cluster_security_group_name}}"
-    tags: sgr
-
-  - name: Create NFS 2049 TCP rule
-    local_action:
-      module: cs_securitygroup_rule
-      security_group: "{{ cluster_security_group_name}}"
-      start_port: 2049
-      end_port: 2049
-      user_security_group: "{{ cluster_security_group_name}}"
+      user_security_group: "{{ item }}"
+    with_items: "{{ cluster_service_group_names }}"
     tags: sgr
 
   - name: Create NFS Services 38465:38469 TCP rule
@@ -74,7 +67,8 @@
       security_group: "{{ cluster_security_group_name}}"
       start_port: 38465
       end_port: 38469
-      user_security_group: "{{ cluster_security_group_name}}"
+      user_security_group: "{{ item }}"
+    with_items: "{{ cluster_service_group_names }}"
     tags: sgr
 
   - name: Create Gluster Server 24007-24008 TCP rule
@@ -87,12 +81,23 @@
     with_items: "{{ cluster_service_group_names }}"
     tags: sgr
 
-  - name: Create Brick Protocal 49152-49352 TCP rule (200 bricks)
+  - name: Create Gluster Server 24007-24008 UDP rule
+    local_action:
+      module: cs_securitygroup_rule
+      security_group: "{{ cluster_security_group_name}}"
+      start_port: 24007
+      end_port: 24008
+      protocol: udp
+      user_security_group: "{{ item }}"
+    with_items: "{{ cluster_service_group_names }}"
+    tags: sgr
+
+  - name: Create Brick Protocol 49152-49652 TCP rule (500 bricks)
     local_action:
       module: cs_securitygroup_rule
       security_group: "{{ cluster_security_group_name}}"
       start_port: 49152
-      end_port: 49352
+      end_port: 49652
       user_security_group: "{{ item }}"
     with_items: "{{ cluster_service_group_names }}"
     tags: sgr
