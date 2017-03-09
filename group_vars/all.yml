@@ -7,4 +7,4 @@ cluster_ssh_key: datsci-exo-kp
 cluster_security_group_name: datsci-exo-sg-martell
 # Cluster access
 cluster_ssh_group_names: [datsci-exo-sg-castleblack,datsci-exo-sg-martell,default]
-cluster_service_group_names: [datsci-exo-sg-martell,datsci-exo-sg-greyjoy-worker,default]
+cluster_service_group_names: [datsci-exo-sg-martell,datsci-exo-sg-greyjoy-master,datsci-exo-sg-greyjoy-worker,default]
